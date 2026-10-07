@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tasks</title>
+</head>
+<body>
+	<h1>All Tasks</h1>
+		{% for task in tasks %}
+			<p>
+			{{ task.title }}
+			{{ task.date}}
+			</p>
+			{% empty %}
+			<p>No tasks yet.</p>
+			{% endfor %}
+		<a href="/tasks/new/">Add New Task</a>
+</body>
+</html>
