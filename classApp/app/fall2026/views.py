@@ -11,3 +11,14 @@ def task_list(request):
 
 		)
 
+def add_task(request):
+	if request.method == 'POST':
+		title = request.POST.get('title','').strip()
+		date =  request.POST.get('date','').strip()
+		if title:
+			Task.objects.create(title=title, date = date)
+			return redirect('task_list')
+
+	return render(request,'task/add_task.html')
+
+

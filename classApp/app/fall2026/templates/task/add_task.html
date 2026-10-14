@@ -1,0 +1,21 @@
+{% extends 'task/base.html' %}
+{% block content %}
+
+<h1>Add a New Task</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label class="form-label">Task Name:</label>
+    <input class="form-control" type="text"
+           name="title" required>
+
+    <label class="form-label mt-3">Task Date:</label>
+    <input class="form-control" type="date"
+           name="date" required>
+
+    <button class="btn btn-primary mt-3"
+            type="submit">Save Task</button>
+</form>
+
+{% endblock %}
