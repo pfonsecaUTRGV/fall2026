@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Task
 from django.contrib.auth.forms import UserCreationForm
-
+from django.contrib.auth.decorators import login_required
 # Define the method to visualize a task from the database
 
 
@@ -37,5 +37,21 @@ def add_task(request):
 			return redirect('task_list')
 
 	return render(request,'task/add_task.html')
+
+@login_required
+def dashboard(request):
+	return render(request,'task/dashboard.html')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
