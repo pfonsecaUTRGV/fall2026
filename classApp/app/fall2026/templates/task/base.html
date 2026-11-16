@@ -14,8 +14,8 @@
     <a class="navbar-brand" href="{% url 'dashboard' %}">Team Dashboard</a>
     <div class="d-flex gap-2 align-items-center">
       {% if user.is_authenticated %}
-          <span> Hi, {{user.name}} </span>
-            <a class="btn-outline-light" href="{% url 'dashboard'}">Dashboard</a>
+          <span> Hi, {{ user.username }} </span>
+            <a class="btn-outline-light" href="{% url 'dashboard' %}">Dashboard</a>
             <form method="POST" action="{% url 'logout' %}"> {% csrf_token %}
               <button class="btn btn-warning"> Logout</button>
             </form>

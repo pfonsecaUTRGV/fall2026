@@ -1,0 +1,14 @@
+{% extends 'task/base.html' %}
+
+{% block content %}
+<h1> Create Account</h1>
+
+<form method = "POST"> 
+{% csrf_token %}
+{{ form.as_p }}
+<button class="btn btn-primary" type="submit">Register</button>
+
+</form>
+
+
+{% endblock %}

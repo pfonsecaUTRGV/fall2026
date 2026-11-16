@@ -8,8 +8,8 @@ urlpatterns = [
 
 	#Pokemon trainer team MVP urls
 	path('register/',views.register, name='register'),
-
+	path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 	path('login/',auth_views.LoginView.as_view(
-		template_name='tasks/login.html'),name='login'),
+		template_name='task/login.html'),name='login'),
 	path('dashboard/',views.dashboard,name='dashboard'),
 ]
