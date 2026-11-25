@@ -1,6 +1,6 @@
 import requests
 import re
-
+from django.db import transaction
 from django.shortcuts import render, redirect
 from .models import Task, PokemonTeam, TeamPokemon
 from django.contrib.auth.models import User
@@ -115,6 +115,67 @@ def create_team(request):
 
 
 
+@login_required
+@require_POST
+def add_pokemon(request, team_id):
+    raw_id = request.POST.get("pokemon_id", "")
+    if not raw_id.isdigit() or int(raw_id) < 1:
+        messages.error(request, "Invalid Pokémon ID.")
+        return redirect("my_teams")
+
+    # Verify external API data before opening a database transaction.
+    try:
+        response = requests.get(
+            f"https://pokeapi.co/api/v2/pokemon/{int(raw_id)}/",
+            timeout=10,
+        )
+        response.raise_for_status()
+        data = response.json()
+        pokemon_id = int(data["id"])
+        pokemon_name = str(data["name"])
+    except (requests.RequestException, ValueError, KeyError, TypeError):
+        messages.error(request, "Unable to verify Pokémon with PokéAPI.")
+        return redirect("my_teams")
+
+    # PostgreSQL row lock serializes additions to the SAME team.
+    with transaction.atomic():
+        team = get_object_or_404(
+            PokemonTeam.objects.select_for_update(),
+            pk=team_id,
+            user=request.user,
+        )
+        if team.members.count() >= 6:
+            messages.error(request, "Team is full: maximum six Pokémon.")
+        else:
+            TeamPokemon.objects.create(
+                team=team, pokemon_id=pokemon_id,
+                pokemon_name=pokemon_name,
+            )
+            messages.success(request, "Pokémon added.")
+    return redirect("my_teams")
+
+
+@login_required
+@require_POST
+def rename_team(request, team_id):
+    team = get_object_or_404(PokemonTeam, pk=team_id, user=request.user)
+    name = request.POST.get("name", "").strip()
+    if not 1 <= len(name) <= 100:
+        messages.error(request, "Team name must contain 1–100 characters.")
+    else:
+        team.name = name
+        team.save(update_fields=["name"])
+        messages.success(request, "Team renamed.")
+    return redirect("my_teams")
+
+@login_required
+@require_POST
+def remove_pokemon(request, team_id, member_id):
+    team = get_object_or_404(PokemonTeam, pk=team_id, user=request.user)
+    member = get_object_or_404(TeamPokemon, pk=member_id, team=team)
+    member.delete()
+    messages.success(request, "Pokémon removed.")
+    return redirect("my_teams")
 
 
 

@@ -14,4 +14,10 @@ urlpatterns = [
 	path('dashboard/',views.dashboard,name='dashboard'),
 	path("pokemon_search/", views.pokemon_search, name="pokemon_search"),
 	path("teams/create/",views.create_team,name="create_team"),
+	path("teams/<int:team_id>/add",views.add_pokemon,name="add_pokemon"),
+	path("teams/<int:team_id>/rename/", views.rename_team, name="rename_team"),
+
+	path("teams/<int:team_id>/remove/<int:member_id>/", views.remove_pokemon,
+     name="remove_pokemon"),
+
 ]

@@ -1,32 +1,43 @@
 {% extends 'task/base.html' %}
 {% block content %}
 <h2>My Pokémon Teams</h2>
-<form method="POST" action="{% url 'create_team' %}"
-      class="mb-4">
+<form method="POST" action="{% url 'create_team' %}" class="mb-4">
   {% csrf_token %}
-  <input name="name" maxlength="100" required
-         placeholder="Team name">
-  <button class="btn btn-primary">Create Team</button>
+  <label for="new-team">New team name</label>
+  <input id="new-team" name="name" maxlength="100" required>
+  <button class="btn btn-primary" type="submit">Create Team</button>
 </form>
-<a href="{% url 'pokemon_search' %}"
-   class="btn btn-outline-primary mb-3">Search Pokémon</a>
-
+<a class="btn btn-outline-primary mb-3" href="{% url 'pokemon_search' %}">
+  Search Pokémon
+</a>
 {% for team in teams %}
 <div class="card mb-3">
   <div class="card-body">
     <h4>{{ team.name }}</h4>
     <p>{{ team.members.count }} / 6 Pokémon</p>
-    <ul>
-    {% for member in team.members.all %}
-      <li>{{ member.pokemon_name|title }}
-          (#{{ member.pokemon_id }})</li>
-    {% empty %}
-      <li>Team is empty.</li>
-    {% endfor %}
+    <form method="POST" action="{% url 'rename_team' team.id %}" class="mb-3">
+      {% csrf_token %}
+      <label for="team-{{ team.id }}">Rename team</label>
+      <input id="team-{{ team.id }}" name="name" value="{{ team.name }}"
+             maxlength="100" required>
+      <button class="btn btn-secondary" type="submit">Rename</button>
+    </form>
+    <ul class="list-group">
+      {% for member in team.members.all %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ member.pokemon_name|title }} (#{{ member.pokemon_id }})
+        <form method="POST" action="{% url 'remove_pokemon' team.id member.id %}">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-danger" type="submit">Remove</button>
+        </form>
+      </li>
+      {% empty %}
+      <li class="list-group-item">No Pokémon yet.</li>
+      {% endfor %}
     </ul>
   </div>
 </div>
 {% empty %}
-<p>No teams yet. Create one above.</p>
+<p>You have no teams yet. Create one above.</p>
 {% endfor %}
 {% endblock %}
