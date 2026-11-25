@@ -1,0 +1,32 @@
+{% extends 'task/base.html' %}
+{% block content %}
+<h2>My Pokémon Teams</h2>
+<form method="POST" action="{% url 'create_team' %}"
+      class="mb-4">
+  {% csrf_token %}
+  <input name="name" maxlength="100" required
+         placeholder="Team name">
+  <button class="btn btn-primary">Create Team</button>
+</form>
+<a href="{% url 'pokemon_search' %}"
+   class="btn btn-outline-primary mb-3">Search Pokémon</a>
+
+{% for team in teams %}
+<div class="card mb-3">
+  <div class="card-body">
+    <h4>{{ team.name }}</h4>
+    <p>{{ team.members.count }} / 6 Pokémon</p>
+    <ul>
+    {% for member in team.members.all %}
+      <li>{{ member.pokemon_name|title }}
+          (#{{ member.pokemon_id }})</li>
+    {% empty %}
+      <li>Team is empty.</li>
+    {% endfor %}
+    </ul>
+  </div>
+</div>
+{% empty %}
+<p>No teams yet. Create one above.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'task/base.html' %}
+
+{% block content %}
+
+<div class="container text-center mt-5">
+
+    <h1>Pokémon Team Manager</h1>
+
+    <p class="lead">
+        Search Pokémon, create teams, and manage
+        your Pokémon collection!
+    </p>
+
+    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+         width="200" alt="Pikachu">
+
+    <div class="mt-4">
+
+        {% if user.is_authenticated %}
+
+            <h3>Welcome, {{ user.username }}!</h3>
+
+            <a href="{% url 'pokemon_search' %}"
+               class="btn btn-primary">
+                Search Pokémon
+            </a>
+
+            <a href="{% url 'my_teams' %}"
+               class="btn btn-success">
+                My Teams
+            </a>
+
+        {% else %}
+
+            <a href="{% url 'login' %}"
+               class="btn btn-primary">
+                Login
+            </a>
+
+            <a href="{% url 'register' %}"
+               class="btn btn-success">
+                Register
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

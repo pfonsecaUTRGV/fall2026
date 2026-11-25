@@ -1,0 +1,40 @@
+{% extends 'task/base.html' %}
+{% block content %}
+<h2>Search Pokémon</h2>
+<form method="GET" class="mb-3">
+  <input name="q" value="{{ query }}" required
+         class="form-control mb-2"
+         placeholder="Name or ID (pikachu or 25)">
+  <button class="btn btn-primary">Search</button>
+</form>
+
+{% if pokemon %}
+<div class="card p-3" style="max-width: 420px;">
+  <h3>{{ pokemon.name|title }} (#{{ pokemon.id }})</h3>
+  {% if pokemon.image %}
+    <img src="{{ pokemon.image }}" alt="{{ pokemon.name }}"
+         width="150" height="150">
+  {% endif %}
+  <p>Types:
+    {% for type in pokemon.types %}{{ type }} {% endfor %}
+  </p>
+  <p>Height: {{ pokemon.height }} decimeters</p>
+  <p>Weight: {{ pokemon.weight }} hectograms</p>
+  {% for team in teams %}
+  <form method="POST" action="{% url 'add_pokemon' team.id %}"
+        class="mb-2">
+    {% csrf_token %}
+    <input type="hidden" name="pokemon_id"
+           value="{{ pokemon.id }}">
+    <button class="btn btn-success">
+      Add to {{ team.name }}
+    </button>
+  </form>
+  {% empty %}
+    <p>Create a team first.</p>
+    <a href="{% url 'my_teams' %}">My Teams</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
+}
